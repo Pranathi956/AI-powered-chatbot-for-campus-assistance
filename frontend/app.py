@@ -18,7 +18,7 @@ load_dotenv()
 socketio = SocketIO(app)
 
 app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
-PORT = int(os.getenv('PORT', 5000))
+
 
 # ───── Gemini AI Configuration ─────
 genai.configure(api_key="")
@@ -631,9 +631,8 @@ def rasa_webhook():
         }), 500
 
 import os
-
-# app.run line ni ila marchu
+# ... pyna code antha same ...
 if __name__ == "__main__":
-    # Railway icche port ni pick chestundi, lekapothe 8000 teskuntundi
-    port = int(os.environ.get("PORT", 8000))
+    # Railway iche port ni pick chestundi, lekapothe 8000
+    port = int(os.environ.get("PORT", 8000)) 
     app.run(host='0.0.0.0', port=port)

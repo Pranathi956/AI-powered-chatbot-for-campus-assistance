@@ -13,9 +13,10 @@ RUN pip install --no-cache-dir -r Backend/requirements.txt
 
 # Railway environment lo kothaga train cheyadam (Version mismatch fix)
 # Idi Backend folder loki velli kotha model create chestundi
+# Cloud lone train cheyali build appudu
+RUN rasa train --data Backend/data --config Backend/config.yml --domain Backend/domain.yml --out Backend/models
 
-
-# Final Command
+# CMD line lo kotha model path correct ga undali
 CMD rasa run actions --actions Backend.actions --port 5055 & \
     rasa run --enable-api --cors "*" --port 5005 --model Backend/models & \
     python3 frontend/app.py
