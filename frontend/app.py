@@ -629,4 +629,7 @@ def rasa_webhook():
         }), 500
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    # Railway 'PORT' ni automatic ga pick chestundi
+    import os
+    port = int(os.environ.get("PORT", 8000))
+    socketio.run(app, host='0.0.0.0', port=port, allow_unsafe_werkzeug=True)
