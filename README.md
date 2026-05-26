@@ -26,7 +26,7 @@ CampusBot is a comprehensive hybrid chatbot application designed to bridge the c
 
 ---
 ![Result](results/s1.png)
-
+![Result](results/s2.png)![Result](results/s3.png)![Result](results/s4.png)![Result](results/s5.png)
 ## 💻 Installation, Setup & Execution
 
 ###  Clone & Environment Setup
