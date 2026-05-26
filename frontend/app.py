@@ -613,7 +613,8 @@ def rasa_webhook():
 
     try:
         # app.py lo rasa_url line ni ila marchu
-        rasa_url = "http://0.0.0.0:5005/webhooks/rest/webhook"
+        rasa_url = "http://127.0.0.1:5005/webhooks/rest/webhook" 
+# '0.0.0.0' badulu '127.0.0.1' try chey, internal communication ki safe.
         payload = {"sender": "student_user", "message": user_message}
         headers = {"Content-Type": "application/json"}
 
