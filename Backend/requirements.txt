@@ -1,0 +1,5 @@
+rasa==3.6.15
+rasa-sdk==3.6.2
+groq
+python-dotenv
+requests
