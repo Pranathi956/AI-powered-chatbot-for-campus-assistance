@@ -613,7 +613,13 @@ def handle_send_message(data):
 
 @app.route("/rasa_webhook", methods=["POST"])
 def proxy_to_rasa():
-    rasa_url = "http://localhost:5005/webhooks/rest/webhook"
+    rasa_url = "http://127.0.0.1:5005/webhooks/rest/webhook"
+    try:
+        # 5 seconds timeout pettu, lekapothe app hang avtundi
+        response = requests.post(rasa_url, json=request.json, timeout=10)
+        return response.json(), response.status_code
+    except requests.exceptions.ConnectionError:
+        return jsonify([{"text": "Mawa, Rasa server inka ready avthundi. Okka 10 seconds aapi malli try chey!"}]), 503
     response = requests.post(rasa_url, json=request.json)
     return response.json(), response.status_code
 def rasa_webhook():
