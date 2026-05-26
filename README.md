@@ -25,6 +25,15 @@ CampusBot is a comprehensive hybrid chatbot application designed to bridge the c
 * **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
 
 ---
+This is a Hybrid RAG-based Chatbot. It combines Deterministic Retrieval with Generative Augmentation to provide accurate and context-aware responses.
+
+Here is the breakdown of the RAG process in the project:
+
+Retrieval (Knowledge Base): When a user asks a question, the system first attempts to retrieve specific data from the local knowledge base (Rasa's NLU training data and the SQLite Database). This ensures that college-specific information (like fee structures or dates) is 100% accurate.
+
+Augmentation (Context Filling): If the retrieval step identifies the query as 'out-of-scope' or lacks specific data, the system augments the request by passing the context to the Google Gemini API.
+
+Generation (LLM Output): The Gemini Pro model then generates a natural language response based on the query, ensuring the user receives a helpful answer even for complex or untrained questions.
 ![Result](results/s1.png)
 ![Result](results/s2.png)![Result](results/s3.png)![Result](results/s4.png)![Result](results/s5.png)
 ## 💻 Installation, Setup & Execution
