@@ -10,7 +10,8 @@ COPY . .
 
 # Install requirements
 RUN pip install --no-cache-dir -r Backend/requirements.txt
-
+# Database create cheyadaniki idi add chey
+RUN python3 database/setup_sqlite.py
 # Railway environment lo kothaga train cheyadam (Version mismatch fix)
 # Idi Backend folder loki velli kotha model create chestundi
 # Cloud lone train cheyali build appudu

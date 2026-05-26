@@ -2,15 +2,20 @@ import sqlite3
 import os
 
 def setup_db():
-    db_folder = 'database'
-    if not os.path.exists(db_folder):
-        os.makedirs(db_folder)
+    # --- DYNAMIC PATH FIX ---
+    # Ee file unna folder (database folder) ni kashithanga kanukkuntundi
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     
-    db_path = r"D:\Internship HCL\HCL Internship Project\database\college_db.db"
+    # Cloud (Railway) ki laptop ki renditiki pani chestundi
+    db_path = os.path.join(BASE_DIR, "college_db.db")
+    
+    print(f"Attempting to create database at: {db_path}")
+
+    # Connect chestundi (lekapothe create chestundi)
     conn = sqlite3.connect(db_path)    
     cursor = conn.cursor()
 
-    # --- 1. TABLES CREATION (Prathi table cover chesanu) ---
+    # --- 1. TABLES CREATION ---
     queries = [
         "CREATE TABLE IF NOT EXISTS department (dept_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE)",
         "CREATE TABLE IF NOT EXISTS admin (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT UNIQUE, password TEXT)",
@@ -32,10 +37,12 @@ def setup_db():
     for q in queries:
         cursor.execute(q)
 
-    # --- 2. DATA INSERTION (Chala ekkuva data) ---
+    # --- 2. DATA INSERTION ---
     
-    # Admin & Departments
+    # Admin (Railway lo nuvvu login avvalsina details ivi)
     cursor.execute("INSERT OR IGNORE INTO admin (name, email, password) VALUES ('Main Admin', 'admin1@college.com', 'Admin@123')")
+    
+    # Departments
     depts = [('Computer Science and Engineering',), ('Electronics and Communication',), ('Information Technology',), ('Mechanical Engineering',)]
     cursor.executemany("INSERT OR IGNORE INTO department (name) VALUES (?)", depts)
 
@@ -47,7 +54,7 @@ def setup_db():
     ]
     cursor.executemany("INSERT OR IGNORE INTO course (name, department_id) VALUES (?, ?)", courses_data)
 
-    # Exams (Idi ippudu miss avvadhu!)
+    # Exams
     exams_data = [
         ('Python Basics', '2026-06-10', '10:00 AM'),
         ('DBMS Advanced', '2026-06-12', '02:00 PM'),
@@ -60,7 +67,7 @@ def setup_db():
     holidays_data = [('Summer Break', 'May 20 - June 10'), ('Bakrid', 'June 16, 2026'), ('Independence Day', 'August 15, 2026')]
     cursor.executemany("INSERT OR IGNORE INTO holidays (name, date) VALUES (?, ?)", holidays_data)
 
-    # Timings (Gym, Library, etc.)
+    # Timings
     timings_data = [('Gym', '6 AM - 9 PM'), ('Library', '8 AM - 10 PM'), ('College', '9 AM - 4:30 PM'), ('Lab', '10 AM - 5 PM')]
     cursor.executemany("INSERT OR IGNORE INTO timings (type, time) VALUES (?, ?)", timings_data)
 
@@ -78,7 +85,7 @@ def setup_db():
 
     conn.commit()
     conn.close()
-    print("✅ Full Ultimate Database is Ready with ALL tables and data!")
+    print("✅ Full Ultimate Database is Ready in the Cloud!")
 
 if __name__ == "__main__":
     setup_db()

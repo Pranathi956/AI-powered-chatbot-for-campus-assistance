@@ -9,7 +9,8 @@ from groq import Groq
 # 1. GROQ CONFIGURATION
 # ==========================================
 # Replace "YOUR_GROQ_API_KEY" with your actual key
-client = Groq(api_key="")
+api_key_from_env = os.getenv("GROQ_API_KEY")
+client = Groq(api_key="GROQ_API_KEY")
 
 def get_gemini_response(prompt):
     """
@@ -40,7 +41,11 @@ def get_gemini_response(prompt):
 # ==========================================
 # 2. DATABASE CONFIGURATION
 # ==========================================
-DB_PATH = r"D:\Internship HCL\HCL Internship Project\database\college_db.db"
+# Path logic ni ila marchu
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# DB ni 'database' folder lo 'college_db.db' ga fix chestunnam
+DB_PATH = os.path.join(BASE_DIR, "..", "database", "college_db.db")
 
 def get_db_connection():
     try:
