@@ -17,4 +17,4 @@ EXPOSE 8080
 EXPOSE 8000
 
 # Start Action Server, Rasa Server, and Frontend
-CMD rasa run actions --port 5055 & rasa run --enable-api --cors "*" --port 8080 & python3 app.py
+CMD rasa run actions --port 5055 & rasa run --enable-api --cors "*" --port 8080 & python3 frontend/app.py
