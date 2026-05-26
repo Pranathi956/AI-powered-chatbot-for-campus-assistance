@@ -612,7 +612,7 @@ def rasa_webhook():
     user_message = data.get("message")
 
     try:
-        rasa_url = "http://localhost:5005/webhooks/rest/webhook"
+        rasa_url = "http://0.0.0.0:8080/webhooks/rest/webhook"
         payload = {"sender": "student_user", "message": user_message}
         headers = {"Content-Type": "application/json"}
 
