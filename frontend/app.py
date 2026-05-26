@@ -44,9 +44,8 @@ if not os.path.exists(DB_DIR):
     os.makedirs(DB_DIR)
 
 def get_db_connection():
-    # Ikkada connection try chey
     conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    conn.row_factory = sqlite3.Row 
     return conn
 
 # ───── Routes ─────
@@ -81,7 +80,10 @@ def login():
     role = request.form.get('role')
 
     conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
+    
+    
 
     if role == 'admin':
         cursor.execute("SELECT * FROM admin WHERE email = ? AND password = ?", (email, password))
