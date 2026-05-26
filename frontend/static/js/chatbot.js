@@ -184,7 +184,9 @@ $('userInput').addEventListener('keypress', e => {
 
 
 // Socket setup
-const socket = io();
+const socket = io({
+    transports: ['polling'] // ఇక్కడ కేవలం పోలింగ్ మాత్రమే వాడమని ఫిక్స్ చేస్తున్నాం
+,upgrade:false});
 socket.emit('join_room', { room: `room_${student_id}` });
 socket.on('receive_message', data => {
   if (data.student_id == student_id && data.message_from === 'admin') {
