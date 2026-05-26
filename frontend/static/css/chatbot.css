@@ -1,0 +1,340 @@
+/* ===== General Reset ===== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #121212;
+  height: 100vh;
+  overflow: hidden;
+  color: #f1f1f1;
+}
+
+/* ===== Topbar ===== */
+.topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #1f1f1f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.topbar-title {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.logout-btn {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  background: none;
+  border: 2px solid white;
+  padding: 5px 10px;
+  border-radius: 6px;
+  margin-right: 50px;
+}
+
+/* ===== Layout Container ===== */
+.container {
+  display: flex;
+  height: calc(100vh - 60px);
+  margin-top: 60px;
+}
+
+/* ===== Sidebar Navigation ===== */
+.sidebar {
+  width: 240px;
+  background-color: #1e1e1e;
+  border-right: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  color: #f1f1f1;
+}
+
+.avatar {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: #333;
+  margin: 15px 0;
+}
+
+.nav-tabs {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-tab {
+  padding: 12px 15px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.2s ease;
+  color: #ddd;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.nav-tab i {
+  color: #bbb;
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.nav-tab:hover {
+  background-color: #2a2a2a;
+}
+
+.nav-tab.active {
+  background-color: #333;
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+/* ===== Main Section Content ===== */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ===== Tab Content ===== */
+.tab-content {
+  flex: 1;
+  display: none;
+  height: 100%;
+  flex-direction: column;
+}
+
+.tab-content.active {
+  display: flex;
+}
+
+/* ===== Chat Header ===== */
+.chat-header {
+  background-color: #2a2a2a;
+  color: #f1f1f1;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* ===== Chat Box ===== */
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-message {
+  max-width: 75%;
+  margin: 6px 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  display: inline-block;
+  background-color: #333;
+  color: #f1f1f1;
+}
+
+/* Different styles for user and bot/admin */
+.user-message {
+  background-color: #0d6efd;
+  align-self: flex-end;
+  color: white;
+}
+
+.bot-message {
+  background-color: #2d2d2d;
+  align-self: flex-start;
+}
+
+/* Chat areas */
+#chatBotBox, #adminChatBox {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 12px;
+  height: 100%;
+}
+
+/* ===== Input Area ===== */
+.chat-input {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #333;
+  background: #1f1f1f;
+  position: relative;
+  z-index: 2;
+}
+
+.chat-input input[type="text"] {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: #f1f1f1;
+  border-radius: 20px;
+  outline: none;
+  resize: none;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.chat-input button {
+  margin-left: 8px;
+  font-size: 1.2rem;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 20px;
+  background-color: #1a73e8;
+  color: white;
+  cursor: pointer;
+}
+.chat-input button:hover {
+  background-color: #1559c2;
+}
+
+/* ===== Home Section ===== */
+#home {
+  padding: 40px;
+  text-align: center;
+  margin-top: 10%;
+  color: #eee;
+}
+
+#home h2 {
+  font-size: 40px;
+  margin-bottom: 15px;
+  color: #1a73e8;
+}
+
+#home p {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.home-buttons button {
+  margin: 10px;
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.home-buttons button:hover {
+  background-color: #1559c2;
+}
+
+/* ===== Account Section ===== */
+#account {
+  padding: 30px;
+  max-width: 600px;
+  margin: 0 auto;
+  color: #ccc;
+}
+
+#account h2 {
+  color: #1a73e8;
+  margin-bottom: 20px;
+}
+
+#account ul {
+  list-style: none;
+  padding: 0;
+}
+
+#account li {
+  background: #2a2a2a;
+  padding: 12px 18px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+/* ===== Typing Indicator ===== */
+.typing {
+  font-style: italic;
+  opacity: 0.7;
+  animation: blink 1.2s infinite;
+}
+
+/* Scrollable Box */
+.scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+/* Animation */
+@keyframes blink {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.3; }
+}
+
+/* ===== Responsive ===== */
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #333;
+  }
+
+  #home button {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .chat-input {
+    flex-direction: column;
+  }
+
+  .chat-input button {
+    width: 100%;
+    margin: 10px 0 0;
+  }
+}

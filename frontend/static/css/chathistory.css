@@ -1,0 +1,146 @@
+/* ===== Variables ===== */
+:root {
+  --primary:        #1E3A8A;
+  --primary-light:  #3056d3;
+  --bg-light:       #f4f8ff;
+  --white:          #ffffff;
+  --text-dark:      #333;
+}
+
+/* ===== Reset & Base ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+  padding: 20px;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  background: var(--primary);
+  padding: 14px 28px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.navbar h2 {
+  color: var(--white);
+  flex: 1;
+}
+
+
+.navbar a {
+  color: var(--primary);
+  background-color: #fff;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.navbar a:hover,
+.navbar a.active {
+  background-color:var(--primary-light);
+  color: #fff;
+  
+}
+
+.search-bar {
+  margin-top: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      width: 60%;
+      max-width: 400px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+
+
+/* ===== Form Box ===== */
+.form-box {
+  background: var(--white);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ===== User List ===== */
+.form-box ul {
+  list-style: none;
+  margin-top: 15px;
+  padding: 0;
+}
+.form-box li {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 16px;
+}
+.form-box li:last-child {
+  border-bottom: none;
+}
+.user-btn {
+  display: block;
+  text-decoration: none;
+  color: var(--text-dark);
+  padding: 8px 0;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.user-btn:hover {
+  background-color: var(--primary-light);
+  color: #ffffff;
+  border-radius: 8px;
+  padding-left: 8px;
+}
+
+/* ===== Chat Box (for individual conversation) ===== */
+.chat-box {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  background: #f9f9f9;
+}
+.chatbox a {
+  text-decoration: none;
+  color: var(--text-dark); /* optional: ensures link looks like normal text */
+}
+
+.chatbox a:hover {
+  text-decoration: underline; /* optional: add underline on hover if desired */
+  color: var(--primary);      /* optional: change color on hover */
+}
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+
+ .navbar {
+    flex-wrap: nowrap;
+    flex-direction: row;
+  }
+
+  .navbar h2 {
+    font-size: 1.2rem;
+    flex: 1;
+  }
+
+  .navbar a {
+    margin-left: auto;
+  }
+}

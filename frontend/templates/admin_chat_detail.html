@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Chat with {{ student_name }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-title">{{ student_name }}</div>
+    <a href="{{ url_for('totalcharts') }}" class="logout-btn">← Back</a>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="container">
+    <!-- Reuse chat interface layout -->
+    <div class="main-content">
+      
+
+      <div class="chat-box scrollable" id="adminChatBox"></div>
+
+      <div class="chat-input">
+        <input type="text" id="adminMsgInput" placeholder="Type your message..." />
+        <button id="sendAdminMessageBtn">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const student_id = {{ student_id }};
+    const socket = io();
+    const $ = id => document.getElementById(id);
+    const chatBox = $('adminChatBox');
+
+    function addMessage(text, senderType) {
+      const div = document.createElement('div');
+      div.className = 'chat-message ' + (senderType === 'user' ? 'user-message' : 'bot-message');
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendAdminMessage() {
+      const input = $('adminMsgInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      addMessage(msg, 'bot');
+      input.value = '';
+
+      const cleanMsg = msg.replace(/^🧑‍🎓 You: |^🛡️ Admin: /, '');
+
+      await fetch('/send_admin_chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id, message: cleanMsg, message_from: 'admin' })
+      });
+    }
+
+    async function loadChatHistory() {
+      const res = await fetch(`/view_escalation_messages/${student_id}`);
+      const data = await res.json();
+      data.messages.forEach(msg => {
+        const senderType = msg.message_from === 'admin' ? 'bot' : 'user';
+        addMessage(msg.message, senderType);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      $('sendAdminMessageBtn').addEventListener('click', sendAdminMessage);
+      $('adminMsgInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendAdminMessage();
+      });
+
+      socket.emit('join_room', { room: `room_${student_id}` });
+
+      socket.on('receive_message', data => {
+        if (data.student_id == student_id && data.message_from === 'student') {
+          addMessage(data.message, 'user');
+        }
+      });
+
+      loadChatHistory();
+    });
+  </script>
+</body>
+</html>

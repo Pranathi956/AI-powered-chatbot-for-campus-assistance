@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Chat Requests</title>
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+    }
+
+    h2 {
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .search-bar {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      width: 60%;
+      max-width: 400px;
+      font-size: 16px;
+      border: 1px solid #444;
+      background-color: #1e1e1e;
+      color: #fff;
+      border-radius: 6px;
+    }
+
+    .chat-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 800px;
+    }
+
+    .chat-list li {
+      background-color: #1f1f1f;
+      margin-bottom: 10px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #333;
+    }
+
+    .student-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: #e0e0e0;
+    }
+
+    .chat-button {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    .chat-button:hover {
+      background-color: #1559c2;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Student Chat Requests</h2>
+
+  <!-- 🔍 Search Bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search by student name..." onkeyup="filterStudents()" />
+  </div>
+
+  <!-- Student List -->
+  <ul class="chat-list" id="chatList">
+    {% for student in students %}
+    <li>
+      <span class="student-name">{{ student.name }}</span>
+      <a href="{{ url_for('admin_chat_detail', student_id=student.id) }}?source=charts" class="chat-button">
+        Chat
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <!-- JS for Filtering -->
+  <script>
+    function filterStudents() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const items = document.querySelectorAll("#chatList li");
+
+      items.forEach(item => {
+        const name = item.querySelector('.student-name').textContent.toLowerCase();
+        item.style.display = name.includes(input) ? "" : "none";
+      });
+    }
+  </script>
+</body>
+</html>

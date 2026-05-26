@@ -1,0 +1,54 @@
+version: "3.1"
+
+nlu:
+
+- intent: greet
+  examples: |
+    - hi
+    - hello
+    - hey
+    - good morning
+    - good evening
+
+- intent: goodbye
+  examples: |
+    - bye
+    - thank you
+    - thanks
+    - okay thank you
+    - bye bye
+    - see you later
+
+- intent: ask_any_info
+  examples: |
+    - What are the gym timings?
+    - When is the library open?
+    - Tell me the CSE courses
+    - Provide staff details
+    - What departments are available?
+    - Which courses are offered?
+    - Are there any events today?
+    - When is the next exam?
+    - Show me upcoming exams
+    - Can I know the library hours?
+    - What is the college timing?
+    - What time does college start?
+    - Give me course info
+    - How can I contact staff?
+    - Tell me the departments
+    - Give me information about the Computer Science department
+
+- intent: nlu_fallback
+  examples: |
+    - xyzaslkdj
+    - 123456
+    - gibberish words
+- intent: out_of_context
+  examples: |
+    - who is dhoni
+    - tell me a joke
+    - what is the capital of india
+    - how is the weather
+    - i want to buy a car
+    - movies to watch
+    - suggest some music

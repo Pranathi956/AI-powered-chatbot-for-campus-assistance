@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat with {{ student_id }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chatview.css') }}">
+</head>
+<body>
+  <header class="navbar">
+    <h2>Chat with {{ student_id }}</h2>
+    <nav>
+      <a href="{{ url_for('chat_history') }}">Back to Chat History</a>
+    </nav>
+  </header>
+
+  <main class="chat-box">
+    {% for msg in messages %}
+      <div class="message">
+        <strong>{{ msg[0] }}</strong>: {{ msg[2] }}
+        <span class="timestamp">{{ msg[3] }}</span>
+      </div>
+    {% else %}
+      <p>No messages found for this student.</p>
+    {% endfor %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CampusBot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title">CampusBot</div>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+  </div>
+
+  <div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="profile">
+        <div class="avatar"><i class="fas fa-user-circle"></i></div>
+        <div class="username">{{ student_email.split('@')[0]|capitalize }}</div>
+      </div>
+      <hr class="divider">
+      <div class="nav-tabs">
+  <div class="nav-tab active" data-tab="home">
+    <i class="fas fa-house"></i> Home
+  </div>
+  <div class="nav-tab" data-tab="chatbot">
+    <i class="fas fa-robot"></i> Chatbot
+  </div>
+  <div class="nav-tab" data-tab="admin">
+    <i class="fas fa-user-shield"></i> Admin Chat
+  </div>
+  <div class="nav-tab" data-tab="account">
+    <i class="fas fa-user"></i> Account
+  </div>
+</div>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- Home Tab -->
+      <div class="tab-content" id="home" style="display: block;">
+        <h2>"Welcome {{ student_email.split('@')[0]|capitalize }}! Your guide's here."</h2>
+        <p class="greet">Choose who you'd like to chat with to get started</p>
+      
+        <div class="home-buttons">
+          <button id="goBot">Chat with CampusBot</button>
+          <button id="goAdmin">Chat with Admin</button>
+        </div>
+      </div>
+
+      <!-- Chatbot Tab -->
+      <div class="tab-content" id="chatbot" style="display: none; flex-direction: column;">
+        <div class="chat-header">CampusBot Assistant 🤖</div>
+        <div class="scrollable" id="chatBotBox"></div>
+        <div class="chat-input" id="chatBotInput">
+          <input type="text" id="userInput" placeholder="Ask me anything..." />
+          <button id="sendMessageBtn">➤</button>
+        </div>
+      </div>
+
+      <!-- Admin Chat Tab -->
+      <div class="tab-content" id="admin" style="display: none; flex-direction: column;">
+        <div class="chat-header">Chat with Admin</div>
+        <div class="scrollable" id="adminChatBox"></div>
+        <div class="chat-input" id="adminChatInput">
+          <input type="text" id="adminMsgInput" placeholder="Type your message..." />
+          <button id="sendAdminMessageBtn">➤</button>
+        </div>
+      </div>
+
+      <!-- Account Tab -->
+      <div class="tab-content" id="account" style="display: none;">
+  <h2>Your Account Info</h2>
+  <ul>
+    <li><strong>Name:</strong> {{ student_name }}</li>
+    <li><strong>Phone:</strong> {{ student_phone }}</li>
+    <li><strong>Department:</strong> {{ student_dept }}</li>
+    <li><strong>Email:</strong> {{ student_email }}</li>
+  </ul>
+</div>
+
+
+    </div>
+  </div>
+
+  <!-- Socket.io and Script -->
+  <script>const student_id = {{ student_id }};</script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+
+</body>
+</html>

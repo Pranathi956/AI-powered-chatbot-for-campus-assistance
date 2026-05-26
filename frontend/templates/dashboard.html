@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CampusBot - Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title">CampusBot</div>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+  </div>
+
+  <!-- Page Layout -->
+  <div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="profile">
+        <div class="avatar"><i class="fas fa-user-circle"></i></div>
+        <div class="username">{{ admin_name }}</div>
+      </div>
+      <hr class="divider">
+      <div class="nav-tabs">
+        <div class="nav-tab active" data-tab="home"><i class="fas fa-home"></i> Home</div>
+        <div class="nav-tab" data-tab="requests"><i class="fas fa-comments"></i> Student Requests</div>
+        <div class="nav-tab" data-tab="chats"><i class="fas fa-comments"></i> Student Bot Chats</div>
+        <div class="nav-tab" data-tab="account"><i class="fas fa-user"></i> Account</div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+
+      <!-- Home Tab -->
+      <div class="tab-content" id="home" style="display: block;">
+        <section class="summary-cards">
+          <div class="card-link">
+            <div class="card">
+              <h3>Total Chats with Admin</h3>
+              <p id="chatcount">{{ total_admin_chats }}</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="recent-activity">
+          <h2>Today's Chat Requests From Students</h2>
+          <ul class="student-list">
+            {% for student in today_students %}
+              <li>
+                <a href="{{ url_for('admin_chat_detail', student_id=student.id) }}?source=dashboard" class="email-link">
+                  {{ student.email }}
+                </a>
+              </li>
+            {% else %}
+              <li><span style="padding: 14px 20px; display: block; color: #888;">No students have chatted today.</span></li>
+            {% endfor %}
+          </ul>
+        </section>
+      </div>
+
+      <!-- Student Requests Tab -->
+      <div class="tab-content" id="requests" style="display: none;">
+        <iframe src="{{ url_for('totalcharts') }}" style="width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+
+      <!-- Student Chats Tab -->
+      <div class="tab-content" id="chats" style="display: none;">
+        <iframe src="{{ url_for('chat_history_students') }}" style="width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+
+      <!-- Account Tab -->
+      <div class="tab-content" id="account" style="display: none;">
+        <h2>Admin Account Info</h2>
+        <ul>
+          <li><strong>Name:</strong> {{ admin_name }}</li>
+          <li><strong>Email:</strong> {{ admin_email }}</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sidebar Tab Switching -->
+  <script>
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        const showTab = document.getElementById(tab.dataset.tab);
+        if (showTab) showTab.style.display = 'block';
+
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>

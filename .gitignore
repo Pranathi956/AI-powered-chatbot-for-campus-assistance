@@ -1,0 +1,21 @@
+# Virtual Environments
+rasa-env/
+venv/
+env/
+bin/
+lib/
+share/
+include/
+
+# Rasa internal folders
+.rasa/
+models/*.tar.gz
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,22 @@
+version: "3.1"
+
+intents:
+  - ask_any_info
+  - greet
+  - goodbye
+  - nlu_fallback
+
+actions:
+  - action_gemini_enhancer
+
+responses:
+  utter_greet:
+    - text: "Hello! What would you like to know about the campus?"
+  utter_goodbye:
+    - text: "You're welcome! Have a great day 😊"  
+  utter_default:
+    - text: "Sorry, I didn’t get that. Please try asking about gym timings, staff info, exams, or departments."
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

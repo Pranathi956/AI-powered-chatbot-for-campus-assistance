@@ -1,0 +1,82 @@
+<!-- homepage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Chatbot for Campus Assistance</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+</head>
+<body>
+
+  <div class="header-inline">
+    <h1>🤖 Welcome to Campus Assistant Chatbot</h1>
+    <div class="button-group-inline">
+      <button id="create-btn">Create Account</button>
+      <button id="login-btn">Login</button>
+    </div>
+  </div>
+
+  <div class="hero-banner" id="hero-banner"></div>
+
+  <!-- Popup Form -->
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <span class="close" id="close-popup">&times;</span>
+      <h2 id="popup-title">Login</h2>
+
+      <!-- Login Form -->
+      <form id="login-form" method="POST" action="/login" style="display: block;">
+        <label for="role">Select Role:</label>
+        <select id="role" name="role" required>
+          <option value="student">Student</option>
+          <option value="admin">Admin</option>
+        </select>
+
+        <label for="username">Email:</label>
+        <input type="email" name="email" id="username" placeholder="Must end with @college.com" required />
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" placeholder="Min 6 chars, 1 capital, 1 special char" required />
+        <div class="show-password-container">
+  <input type="checkbox" id="show-login-password">
+  <label for="show-password">Show Password</label>
+</div>
+
+        <p class="error-msg" id="error-msg"></p>
+        <button type="submit" id="submit-btn">Submit</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" method="POST" action="/register" style="display: none;">
+        <label for="reg_name">Full Name:</label>
+        <input type="text" name="name" id="reg_name" required>
+
+        <label for="reg_contact">Phone Number:</label>
+        <div class="phone-container">
+        <span class="country-code">+91</span>
+        <input type="tel" name="contact" id="reg_contact" pattern="[0-9]{10}" required>
+      </div>
+
+
+        <label for="reg_dept">Department:</label>
+        <input type="text" name="department" id="reg_dept" required>
+
+        <label for="reg_email">Email:</label>
+        <input type="email" name="email" id="reg_email" placeholder="Must end with @college.com" required>
+
+        <label for="reg_password">Password:</label>
+        <input type="password" name="password" id="reg_password" placeholder="Min 6 chars, 1 capital, 1 special char" required />
+        <div class="show-password-container">
+  <input type="checkbox" id="show-register-password">
+  <label for="show-password">Show Password</label>
+</div>
+
+        <p class="error-msg" id="register-error-msg"></p>
+        <button type="submit" id="register-submit-btn">Register</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
+</body>
+</html>

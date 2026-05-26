@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Bot Chats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* ===== Reset ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      padding: 30px;
+    }
+
+  
+
+    h2 {
+      margin-top: 20px;
+      margin-bottom: 30px;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    /* ===== Search Bar ===== */
+    .search-bar {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      width: 60%;
+      max-width: 400px;
+      font-size: 16px;
+      background-color: #1e1e1e;
+      color: white;
+      border: 1px solid #444;
+      border-radius: 6px;
+    }
+
+    .search-bar input::placeholder {
+      color: #aaa;
+    }
+
+    /* ===== Chat List ===== */
+    .chatbox {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 800px;
+    }
+
+    .chatbox li {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #1f1f1f;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: white;
+      transition: background 0.2s ease;
+    }
+
+    .chatbox li:hover {
+      background-color: #2a2a2a;
+    }
+
+    .chatbox li span {
+      flex-grow: 1;
+      font-size: 16px;
+    }
+
+    .chatbox .chat-btn {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    .chatbox .chat-btn:hover {
+      background-color: #1559c2;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 600px) {
+      .search-bar input {
+        width: 90%;
+      }
+
+      .chatbox li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .chatbox .chat-btn {
+        margin-top: 8px;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Main Content -->
+
+    <h2>Student - Chatbot Conversations</h2>
+
+    <!-- 🔍 Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by student name..." />
+    </div>
+
+    <!-- Student Chat List -->
+    <ul class="chatbox" id="chatList">
+      {% for student in students %}
+      <li>
+        <span>{{ student.name }}</span>
+        <a href="{{ url_for('view_chat', email=student.email) }}" class="chat-btn">Chat</a>
+      </li>
+      {% else %}
+      <li><span>No student chats available.</span></li>
+      {% endfor %}
+    </ul>
+  
+
+  <!-- JS Filter -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById("searchInput");
+      const chatList = document.getElementById("chatList");
+      const items = chatList.getElementsByTagName("li");
+
+      searchInput.addEventListener("keyup", () => {
+        const filter = searchInput.value.toLowerCase();
+        Array.from(items).forEach((item) => {
+          const text = item.textContent.toLowerCase();
+          item.style.display = text.includes(filter) ? "" : "none";
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

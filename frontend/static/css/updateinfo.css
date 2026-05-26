@@ -1,0 +1,110 @@
+:root {
+  --primary: #1E3A8A;
+  --primary-light: #3056d3;
+  --white: #ffffff;
+  --bg: #f4f8ff;
+  --text: #333;
+}
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* Navbar */
+.navbar {
+  background: var(--primary);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--white);
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.navbar a {
+  color: var(--white);
+  margin-left: 18px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.navbar a:hover,
+.navbar a.active {
+   background-color: #FFF;
+  color: var(--primary);
+  padding: 5px;
+  border-radius: 3px;
+}
+
+/* Form Box */
+.form-box {
+  background: var(--white);
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.form-box h2 {
+  color: var(--primary);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form elements */
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+  color: #444;
+}
+
+form input[type="text"],
+form input[type="date"],
+form input[type="time"],
+form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 6px;
+  background: #fff;
+}
+
+form textarea {
+  resize: vertical;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 18px;
+  background: var(--primary-light);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: var(--primary);
+}
