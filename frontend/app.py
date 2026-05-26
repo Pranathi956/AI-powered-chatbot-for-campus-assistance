@@ -19,7 +19,7 @@ socketio = SocketIO(app)
 
 app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode=None)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 # ───── Gemini AI Configuration ─────
 genai.configure(api_key="")
 
@@ -615,39 +615,28 @@ def handle_send_message(data):
 def proxy_to_rasa():
     rasa_url = "http://127.0.0.1:5005/webhooks/rest/webhook"
     try:
-        # 5 seconds timeout pettu, lekapothe app hang avtundi
-        response = requests.post(rasa_url, json=request.json, timeout=10)
-        return response.json(), response.status_code
-    except requests.exceptions.ConnectionError:
-        return jsonify([{"text": "Mawa, Rasa server inka ready avthundi. Okka 10 seconds aapi malli try chey!"}]), 503
-    
-def rasa_webhook():
-    data = request.get_json()
-    user_message = data.get("message")
-
-    try:
-        # app.py lo rasa_url line ni ila marchu
-        rasa_url = "http://127.0.0.1:5005/webhooks/rest/webhook" 
-# '0.0.0.0' badulu '127.0.0.1' try chey, internal communication ki safe.
+        # 1. Chatbot.js నుండి వచ్చే డేటాని పట్టుకో
+        data = request.get_json()
+        user_message = data.get("message")
+        
+        # 2. Rasa కి పంపాల్సిన ఫార్మాట్ సిద్ధం చెయ్
         payload = {"sender": "student_user", "message": user_message}
-        headers = {"Content-Type": "application/json"}
-
-        rasa_response = requests.post(rasa_url, json=payload, headers=headers)
-        messages = rasa_response.json()
-
+        
+        # 3. Rasa సర్వర్‌కి పంపు
+        response = requests.post(rasa_url, json=payload, timeout=10)
+        messages = response.json()
+        
+        # 4. Chatbot.js కి తిరిగి 'responses' అనే కీ తో పంపు (ఇది చాలా ముఖ్యం!)
         return jsonify({"responses": messages})
+        
     except Exception as e:
-        print("❌ Error contacting Rasa:", e)
+        print(f"❌ Rasa Error: {e}")
         return jsonify({
-            "responses": [{
-            "text": f"❌ Could not connect to Rasa: {str(e)}"
-            }]
-        }), 500
+            "responses": [{"text": "Mawa, Rasa server ready avthundi. 10s aagu!"}]
+        }), 503
 
 import os
 # ... pyna code antha same ...
 if __name__ == "__main__":
-    # Railway iche port ni pick chestundi, lekapothe 8000
-    port = int(os.environ.get("PORT", 8000)) 
-    app.run(host='0.0.0.0', port=port)
-    socketio.run(app, host='0.0.0.0', port=8080, allow_unsafe_werkzeug=True)
+    port = int(os.environ.get("PORT", 8080))
+    socketio.run(app, host='0.0.0.0', port=port)
