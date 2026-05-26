@@ -19,7 +19,7 @@ socketio = SocketIO(app)
 
 app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
 
-
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode=None)
 # ───── Gemini AI Configuration ─────
 genai.configure(api_key="")
 
@@ -620,8 +620,7 @@ def proxy_to_rasa():
         return response.json(), response.status_code
     except requests.exceptions.ConnectionError:
         return jsonify([{"text": "Mawa, Rasa server inka ready avthundi. Okka 10 seconds aapi malli try chey!"}]), 503
-    response = requests.post(rasa_url, json=request.json)
-    return response.json(), response.status_code
+    
 def rasa_webhook():
     data = request.get_json()
     user_message = data.get("message")
