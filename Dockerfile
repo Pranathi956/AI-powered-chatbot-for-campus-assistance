@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/
 # Install requirements
 COPY Backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
+# Copy models folder explicitly
+COPY models /app/models
 # Copy all files
 COPY . .
 
@@ -22,5 +23,5 @@ EXPOSE 8000
 # 3. Flask app (Port 8000)
 # Rasa ni 5005 ki marcham (Internal usage kosam)
 CMD rasa run actions --actions Backend.actions --port 5055 & \
-    rasa run --enable-api --cors "*" --port 5005 & \
+    rasa run --enable-api --cors "*" --port 5005 --model models & \
     python3 frontend/app.py
