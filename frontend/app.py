@@ -11,7 +11,7 @@ import traceback
 import uuid
 import re
 import requests
-import google.generativeai as genai
+
 
 app = Flask(__name__)
 load_dotenv()
