@@ -2,26 +2,22 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# System dependencies
+# 1. System dependencies
 RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/lists/*
 
-# Install requirements
-COPY Backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-# Copy models folder explicitly
-COPY models /app/models
-# Copy all files
+# 2. Copy all files first (Idhi chesthe Backend, frontend, models anni okesaari vachestayi)
 COPY . .
 
-# Ports
-EXPOSE 8080
-EXPOSE 8000
+# 3. Install requirements (Backend folder nundi pick chestunnam)
+RUN pip install --no-cache-dir -r Backend/requirements.txt
 
-# Final Command:
-# 1. Action server (Backend folder nundi run chestunnam)
-# 2. Rasa server (Port 8080)
-# 3. Flask app (Port 8000)
-# Rasa ni 5005 ki marcham (Internal usage kosam)
+# 4. Ports expose cheyalsina avasaram ledu kaani safety ki uncham
+EXPOSE 8000
+EXPOSE 5005
+EXPOSE 5055
+
+# 5. Final Command
+# Rasa ni 5005 port lo, Model ni Backend/models folder nundi load chestunnam
 CMD rasa run actions --actions Backend.actions --port 5055 & \
-    rasa run --enable-api --cors "*" --port 5005 --model models & \
+    rasa run --enable-api --cors "*" --port 5005 --model Backend/models & \
     python3 frontend/app.py
