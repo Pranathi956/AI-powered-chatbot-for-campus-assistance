@@ -20,6 +20,7 @@ EXPOSE 8000
 # 1. Action server (Backend folder nundi run chestunnam)
 # 2. Rasa server (Port 8080)
 # 3. Flask app (Port 8000)
+# Rasa ni 5005 ki marcham (Internal usage kosam)
 CMD rasa run actions --actions Backend.actions --port 5055 & \
-    rasa run --enable-api --cors "*" --port 8080 & \
+    rasa run --enable-api --cors "*" --port 5005 & \
     python3 frontend/app.py
