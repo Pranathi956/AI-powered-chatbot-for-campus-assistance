@@ -35,10 +35,16 @@ def generate_gemini_reply(prompt):
 # ───── Database Connection (SQLite) ─────
 # ───── Database Connection (SQLite) ─────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Database 'database' folder lo undi kabatti path ila undali
-DB_PATH = os.path.join(BASE_DIR, 'database', 'college_db.db')
+# Note: Database folder frontend folder ki parallel ga undali
+DB_DIR = os.path.join(BASE_DIR, '..', 'database') 
+DB_PATH = os.path.join(DB_DIR, 'college_db.db')
+
+# 2. Folder lekapothe create chey (Railway kosam idi chala important)
+if not os.path.exists(DB_DIR):
+    os.makedirs(DB_DIR)
 
 def get_db_connection():
+    # Ikkada connection try chey
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
