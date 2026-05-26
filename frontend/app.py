@@ -612,6 +612,10 @@ def handle_send_message(data):
     }, room=f"room_{student_id}")
 
 @app.route("/rasa_webhook", methods=["POST"])
+def proxy_to_rasa():
+    rasa_url = "http://localhost:5005/webhooks/rest/webhook"
+    response = requests.post(rasa_url, json=request.json)
+    return response.json(), response.status_code
 def rasa_webhook():
     data = request.get_json()
     user_message = data.get("message")
@@ -641,3 +645,4 @@ if __name__ == "__main__":
     # Railway iche port ni pick chestundi, lekapothe 8000
     port = int(os.environ.get("PORT", 8000)) 
     app.run(host='0.0.0.0', port=port)
+    socketio.run(app, host='0.0.0.0', port=8080, allow_unsafe_werkzeug=True)
