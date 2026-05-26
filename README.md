@@ -25,6 +25,7 @@ CampusBot is a comprehensive hybrid chatbot application designed to bridge the c
 * **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
 
 ---
+![Result](results/screenshot1.png)
 ## 💻 Installation, Setup & Execution
 
 ###  Clone & Environment Setup
@@ -53,3 +54,5 @@ rasa train
 rasa run actions
 rasa run --enable-api --cors "*"
 python app.py
+
+
