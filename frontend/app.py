@@ -34,17 +34,14 @@ def generate_gemini_reply(prompt):
 
 # ───── Database Connection (SQLite) ─────
 # ───── Database Connection (SQLite) ─────
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Database 'database' folder lo undi kabatti path ila undali
+DB_PATH = os.path.join(BASE_DIR, 'database', 'college_db.db')
+
 def get_db_connection():
-    # Direct path to the database
-    db_path = r"D:\Internship HCL\HCL Internship Project\database\college_db.db"
-    
-    try:
-        conn = sqlite3.connect(db_path) 
-        conn.row_factory = sqlite3.Row
-        return conn
-    except Exception as e:
-        print(f"❌ Database Connection Error: {e}")
-        return None
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 # ───── Routes ─────
 
@@ -77,7 +74,7 @@ def login():
     password = request.form.get('password')
     role = request.form.get('role')
 
-    conn = get_db_connection()
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     if role == 'admin':
