@@ -11,10 +11,11 @@ COPY . .
 # Install requirements
 RUN pip install --no-cache-dir -r Backend/requirements.txt
 
-# Railway PORT variable pick cheskovadam kosam
-ENV PORT=8000
+# Railway environment lo kothaga train cheyadam (Version mismatch fix)
+# Idi Backend folder loki velli kotha model create chestundi
+RUN rasa train --data Backend/data --config Backend/config.yml --domain Backend/domain.yml --out Backend/models
 
-# Rasa model ni properly point chesthu, memory leak avvakunda run cheyali
+# Final Command
 CMD rasa run actions --actions Backend.actions --port 5055 & \
     rasa run --enable-api --cors "*" --port 5005 --model Backend/models & \
     python3 frontend/app.py
