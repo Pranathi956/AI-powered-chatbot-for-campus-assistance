@@ -11,35 +11,35 @@ import traceback
 import uuid
 import re
 import requests
-import google.generativeai as genai  # <-- ఈ లైన్ ఖచ్చితంగా ఉండాలి
+from groq import Groq
 
 app = Flask(__name__)
 load_dotenv()
-socketio = SocketIO(app)
 
+# ───── Configuration ─────
 app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
-
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
-# ───── Gemini AI Configuration ─────
-genai.configure(api_key="")
 
-def generate_gemini_reply(prompt):
+# ───── Groq AI Configuration (Replacing Gemini) ─────
+# Gemini references are completely removed to prevent Railway ModuleNotFoundError
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+def generate_groq_reply(prompt):
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        response = model.generate_content(prompt)
-        return response.text
+        completion = client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return completion.choices[0].message.content
     except Exception as e:
-        print("Gemini Error:", str(e))
-        return "🤖 Sorry, I couldn't fetch a response from Gemini right now."
+        print("Groq Error:", str(e))
+        return "🤖 Sorry, I couldn't fetch a response from the AI right now."
 
-# ───── Database Connection (SQLite) ─────
 # ───── Database Connection (SQLite) ─────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Note: Database folder frontend folder ki parallel ga undali
 DB_DIR = os.path.join(BASE_DIR, '..', 'database') 
 DB_PATH = os.path.join(DB_DIR, 'college_db.db')
 
-# 2. Folder lekapothe create chey (Railway kosam idi chala important)
 if not os.path.exists(DB_DIR):
     os.makedirs(DB_DIR)
 
@@ -79,16 +79,13 @@ def login():
     password = request.form.get('password')
     role = request.form.get('role')
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    
-    
 
     if role == 'admin':
         cursor.execute("SELECT * FROM admin WHERE email = ? AND password = ?", (email, password))
         admin = cursor.fetchone()
-
         if admin:
             session['admin'] = email
             cursor.close()
@@ -102,7 +99,6 @@ def login():
     elif role == 'student':
         cursor.execute("SELECT id FROM student WHERE email = ? AND password = ?", (email, password))
         student = cursor.fetchone()
-
         if student:
             session['student'] = email
             session['student_id'] = student['id']
@@ -114,83 +110,10 @@ def login():
             cursor.close()
             conn.close()
             return render_template('homepage.html', error="❌ Invalid Student Credentials")
-
     else:
         cursor.close()
         conn.close()
         return render_template('homepage.html', error="❌ Invalid Role")
-    
-@app.route('/view_escalation/<int:escalation_id>')
-def view_escalation(escalation_id):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT student_id, issue FROM live_escalations WHERE id = ?", (escalation_id,))
-    row = cursor.fetchone()
-
-    if not row:
-        conn.close()
-        return "Invalid escalation ID", 404
-
-    student_id = row['student_id']
-    issue = row['issue']
-
-    cursor.execute("SELECT message, message_from, timestamp FROM student_admin_chat WHERE student_id = ? ORDER BY timestamp", (student_id,))
-    chat_data = cursor.fetchall()
-    conn.close()
-
-    return render_template('student_chat_admin.html', student_id=student_id, issue=issue, chat_data=chat_data, role="student")
-
-@app.route('/view_escalation_data')
-def view_escalation_data():
-    if 'student_id' not in session:
-        return jsonify([])
-
-    student_id = session['student_id']
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT message, message_from FROM student_admin_chat WHERE student_id = ? ORDER BY timestamp", (student_id,))
-    chat_data = cursor.fetchall()
-    conn.close()
-
-    return jsonify([
-        {
-            "message": row["message"],
-            "sender": row["message_from"]
-        } for row in chat_data
-    ])
-
-@app.route('/view_escalation_messages/<int:student_id>')
-def view_escalation_messages(student_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("""
-      SELECT message, message_from FROM student_admin_chat 
-      WHERE student_id=? ORDER BY timestamp
-    """, (student_id,))
-    msgs = cur.fetchall()
-    cur.close()
-    conn.close()
-    return jsonify(messages=[dict(m) for m in msgs])
-
-@app.route('/send_admin_chat', methods=['POST'])
-def send_admin_chat():
-    data = request.get_json()
-    student_id = data['student_id']
-    msg = data['message']
-    msg_from = data['message_from']
-    conn = get_db_connection()
-    cur = conn.cursor()
-    # SQLite uses CURRENT_TIMESTAMP by default if setup correctly, or we can pass datetime.now()
-    cur.execute("""
-      INSERT INTO student_admin_chat (student_id, admin_id, message_from, message, timestamp) 
-      VALUES (?, 1, ?, ?, ?)
-    """, (student_id, msg_from, msg, datetime.now()))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return "OK", 200
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -251,7 +174,6 @@ def register():
     finally:
         cursor.close()
         conn.close()
-
 @app.route('/chatbot')
 def chatbot():
     if 'student' not in session:
@@ -374,6 +296,30 @@ def load_session():
     except Exception as e:
         return jsonify({"session": []}), 500
 
+@app.route("/rasa_webhook", methods=["POST"])
+def proxy_to_rasa():
+    rasa_url = os.getenv("RASA_URL", "http://127.0.0.1:5005/webhooks/rest/webhook")
+    try:
+        data = request.get_json()
+        user_message = data.get("message")
+        payload = {"sender": "student_user", "message": user_message}
+        
+        response = requests.post(rasa_url, json=payload, timeout=10)
+        messages = response.json()
+        
+        # If Rasa has no response, use Groq (The actual AI Logic)
+        if not messages:
+            bot_text = generate_groq_reply(user_message)
+            messages = [{"text": bot_text}]
+            
+        return jsonify({"responses": messages})
+        
+    except Exception as e:
+        # Fallback to Groq if Rasa server is not reachable
+        bot_text = generate_groq_reply(request.get_json().get("message"))
+        return jsonify({
+            "responses": [{"text": bot_text}]
+        }), 200
 @app.route('/logout')
 def logout():
     session.clear()
@@ -406,7 +352,7 @@ def submit_escalation():
         cursor.close()
         conn.close()
 
-    return render_template("chat_socket.html", student_id=student_id, issue=issue, role='admin')
+    return render_template("chat_socket.html", student_id=student_id, issue=issue, role='student')
 
 @app.route('/dashboard')
 def dashboard():
@@ -421,7 +367,6 @@ def dashboard():
     admin_row = cursor.fetchone()
     admin_name = admin_row['name'] if admin_row else 'Admin'
 
-    # SQLite uses date('now') for current date comparison
     cursor.execute("""
         SELECT DISTINCT s.id, s.email
         FROM student_admin_chat c
@@ -476,6 +421,151 @@ def chat_history_students():
 
     return render_template('chat_history.html', students=students)
 
+@app.route('/view_chat/<email>')
+def view_chat(email):
+    if 'admin' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name FROM student WHERE email = ?", (email,))
+    student = cursor.fetchone()
+
+    if not student:
+        conn.close()
+        return f"No student found with email: {email}"
+
+    cursor.execute("""
+        SELECT message_from AS sender, message, timestamp 
+        FROM student_chatbot_chat
+        WHERE student_id = ?
+        ORDER BY timestamp
+    """, (student['id'],))
+    chats = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('student_chat_detail.html', student_id=student['id'], student_name=student['name'], chats=chats)
+
+@app.route('/admin_chat/<int:student_id>')
+def admin_chat_detail(student_id):
+    if 'admin' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM student WHERE id = ?", (student_id,))
+    student = cursor.fetchone()
+    student_name = student['name'] if student else f"Student {student_id}"
+
+    cursor.execute("""
+        SELECT message_from AS sender, message, timestamp 
+        FROM student_admin_chat 
+        WHERE student_id = ? 
+        ORDER BY timestamp
+    """, (student_id,))
+    chat_data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template("admin_chat_detail.html", student_id=student_id, student_name=student_name, chat_data=chat_data)
+
+# ───── SocketIO Logic ─────
+
+@socketio.on('join_room')
+def handle_join(data):
+    room = f"room_{data['room']}"
+    join_room(room)
+    print(f"✅ User joined room: {room}")
+
+@socketio.on('send_message')
+def handle_send_message(data):
+    student_id = data['student_id']
+    # Emitting to specific student room
+    emit('receive_message', {
+        'student_id': student_id,
+        'message': data['message'],
+        'message_from': data['message_from']
+    }, room=f"room_{student_id}")
+
+# ───── Additional Admin Detailed Routes ─────
+
+@app.route('/view_escalation/<int:escalation_id>')
+def view_escalation(escalation_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT student_id, issue FROM live_escalations WHERE id = ?", (escalation_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
+        return "Invalid escalation ID", 404
+
+    student_id = row['student_id']
+    issue = row['issue']
+
+    cursor.execute("""
+        SELECT message, message_from, timestamp 
+        FROM student_admin_chat 
+        WHERE student_id = ? 
+        ORDER BY timestamp
+    """, (student_id,))
+    chat_data = cursor.fetchall()
+    conn.close()
+
+    return render_template('student_chat_admin.html', student_id=student_id, issue=issue, chat_data=chat_data, role="student")
+
+@app.route('/view_escalation_data')
+def view_escalation_data():
+    if 'student_id' not in session:
+        return jsonify([])
+
+    student_id = session['student_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT message, message_from FROM student_admin_chat WHERE student_id = ? ORDER BY timestamp", (student_id,))
+    chat_data = cursor.fetchall()
+    conn.close()
+
+    return jsonify([
+        {
+            "message": row["message"],
+            "sender": row["message_from"]
+        } for row in chat_data
+    ])
+
+@app.route('/view_escalation_messages/<int:student_id>')
+def view_escalation_messages(student_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+      SELECT message, message_from FROM student_admin_chat 
+      WHERE student_id=? ORDER BY timestamp
+    """, (student_id,))
+    msgs = cur.fetchall()
+    cur.close()
+    conn.close()
+    return jsonify(messages=[dict(m) for m in msgs])
+
+@app.route('/send_admin_chat', methods=['POST'])
+def send_admin_chat():
+    data = request.get_json()
+    student_id = data['student_id']
+    msg = data['message']
+    msg_from = data['message_from']
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+      INSERT INTO student_admin_chat (student_id, admin_id, message_from, message, timestamp) 
+      VALUES (?, 1, ?, ?, ?)
+    """, (student_id, msg_from, msg, datetime.now()))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return "OK", 200
+
 @app.route('/totalcharts')
 def totalcharts():
     if 'admin' not in session:
@@ -489,74 +579,6 @@ def totalcharts():
     conn.close()
 
     return render_template('totalcharts.html', students=students)
-
-@app.route('/view_chat/<email>')
-def view_chat(email):
-    if 'admin' not in session:
-        return redirect(url_for('login'))
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id, name FROM student WHERE email = ?", (email,))
-    student = cursor.fetchone()
-
-    if not student:
-        conn.close()
-        return f"No student found with email: {email}"
-
-    student_id = student['id']
-    student_name = student['name']
-
-    cursor.execute("""
-        SELECT message_from AS sender, message, timestamp 
-        FROM student_chatbot_chat
-        WHERE student_id = ?
-        ORDER BY timestamp
-    """, (student_id,))
-    chats = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return render_template(
-        'student_chat_detail.html',
-        student_id=student_id,
-        student_name=student_name,
-        chats=chats
-    )
-
-@app.route('/admin_chat/<int:student_id>')
-def admin_chat_detail(student_id):
-    if 'admin' not in session:
-        return redirect(url_for('login'))
-
-    source = request.args.get('source', 'dashboard')
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT name FROM student WHERE id = ?", (student_id,))
-    student = cursor.fetchone()
-    student_name = student['name'] if student else f"Student {student_id}"
-
-    cursor.execute("""
-        SELECT message_from AS sender, message, timestamp 
-        FROM student_admin_chat 
-        WHERE student_id = ? 
-        ORDER BY timestamp
-    """, (student_id,))
-    chat_data = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return render_template(
-        "admin_chat_detail.html",
-        student_id=student_id,
-        student_name=student_name,
-        chat_data=chat_data,
-        source=source
-    )
 
 @app.route('/view_bot_chat/<int:student_id>')
 def view_bot_chat(student_id):
@@ -593,50 +615,7 @@ def view_chatbot_data():
         } for row in data
     ])
 
-@socketio.on('join_room')
-def handle_join(data):
-    room = data['room']
-    join_room(room)
-    print(f"✅ User joined room: {room}")
-
-@socketio.on('send_message')
-def handle_send_message(data):
-    student_id = int(data['student_id'])
-    message = data['message']
-    message_from = data['message_from']
-
-    emit('receive_message', {
-        'student_id': student_id,
-        'message': message,
-        'message_from': message_from
-    }, room=f"room_{student_id}")
-
-@app.route("/rasa_webhook", methods=["POST"])
-def proxy_to_rasa():
-    rasa_url = "http://127.0.0.1:5005/webhooks/rest/webhook"
-    try:
-        # 1. Chatbot.js నుండి వచ్చే డేటాని పట్టుకో
-        data = request.get_json()
-        user_message = data.get("message")
-        
-        # 2. Rasa కి పంపాల్సిన ఫార్మాట్ సిద్ధం చెయ్
-        payload = {"sender": "student_user", "message": user_message}
-        
-        # 3. Rasa సర్వర్‌కి పంపు
-        response = requests.post(rasa_url, json=payload, timeout=10)
-        messages = response.json()
-        
-        # 4. Chatbot.js కి తిరిగి 'responses' అనే కీ తో పంపు (ఇది చాలా ముఖ్యం!)
-        return jsonify({"responses": messages})
-        
-    except Exception as e:
-        print(f"❌ Rasa Error: {e}")
-        return jsonify({
-            "responses": [{"text": "Mawa, Rasa server ready avthundi. 10s aagu!"}]
-        }), 503
-
-import os
-# ... pyna code antha same ...
 if __name__ == "__main__":
+    # Railway sets PORT dynamically
     port = int(os.environ.get("PORT", 8080))
     socketio.run(app, host='0.0.0.0', port=port)
