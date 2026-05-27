@@ -4,7 +4,11 @@ import sqlite3
 import os
 from typing import Any, Text, Dict, List
 from groq import Groq 
-
+import sys
+# Prathi print ventane kanipinchela chesthundhi
+def print_flush(text):
+    print(text)
+    sys.stdout.flush()
 # ==========================================
 # 1. GROQ CONFIGURATION
 # ==========================================
@@ -44,10 +48,9 @@ def get_groq_response(prompt):
 # ==========================================
 # 2. DATABASE CONFIGURATION
 # ==========================================
-# actions.py line 44 replacement
-#DB_PATH = os.path.join(os.getcwd(), "database", "college_db.db")
-# Path ni hardcode chesi chuddam 
-DB_PATH = "/app/database/college_db.db"
+
+BASE_DIR = os.getcwd() # ఇది నీ ప్రాజెక్ట్ రూట్ ఫోల్డర్ ని తీసుకుంటుంది
+DB_PATH = os.path.join(BASE_DIR, "database", "college_db.db")
 print(f"DEBUG: Looking for database at {DB_PATH}") 
 
 def get_db_connection():
@@ -132,8 +135,9 @@ class ActionGroqEnhancer(Action):
                 dispatcher.utter_message(text=f"Info: {raw_info}" if raw_info else "I only handle campus-related queries.")
 
         except Exception as e:
-            print(f"❌ CRITICAL ERROR in Action Server: {e}")
-            dispatcher.utter_message(text="An internal error occurred.")
+            dispatcher.utter_message(text=f"❌ Action Error: {str(e)}")
+            print(f"❌ CRITICAL ERROR: {e}")
+            return []
         finally:
             if connection:
                 connection.close()
