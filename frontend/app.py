@@ -22,6 +22,12 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # ───── Groq AI Configuration (Replacing Gemini) ─────
 # Gemini references are completely removed to prevent Railway ModuleNotFoundError
+# Patha line: client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+# Kotha line (Safe version):
+api_key = os.getenv("GROQ_API_KEY")
+if not api_key:
+    print("❌ ERROR: GROQ_API_KEY is not set in Environment Variables!")
+client = Groq(api_key=api_key or "temporary_key_to_prevent_crash")
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def generate_groq_reply(prompt):
