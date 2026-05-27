@@ -24,11 +24,16 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 # Gemini references are completely removed to prevent Railway ModuleNotFoundError
 # Patha line: client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 # Kotha line (Safe version):
+# Patha line: client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+# Dini badulu idi petti chudu:
 api_key = os.getenv("GROQ_API_KEY")
+print(f"DEBUG: API KEY IS -> '{api_key}'") # Logs lo key em vastundo telustundi
+
 if not api_key:
-    print("❌ ERROR: GROQ_API_KEY is not set in Environment Variables!")
-client = Groq(api_key=api_key or "temporary_key_to_prevent_crash")
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+    # Key dorakkapothe manual ga ikkada petti test chey (Not safe for production, but only for testing)
+    client = Groq(api_key=os.getenv("GROQ_API_KEY")) 
+else:
+    client = Groq(api_key=api_key)
 
 def generate_groq_reply(prompt):
     try:
