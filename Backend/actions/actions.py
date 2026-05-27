@@ -76,7 +76,9 @@ class ActionGroqEnhancer(Action):
 
         user_message = tracker.latest_message.get('text', '').lower()
         intent_name = tracker.latest_message.get('intent', {}).get('name')
-        
+        print(f"DEBUG: User message is {user_message}")
+        print(f"DEBUG: Checking database at {DB_PATH}")
+        print(f"DEBUG: DB exists? {os.path.exists(DB_PATH)}")
         connection = get_db_connection()
         raw_info = ""
 
@@ -130,6 +132,7 @@ class ActionGroqEnhancer(Action):
                 dispatcher.utter_message(text=f"Info: {raw_info}" if raw_info else "I only handle campus-related queries.")
 
         except Exception as e:
+            print(f"❌ CRITICAL ERROR in Action Server: {e}")
             dispatcher.utter_message(text="An internal error occurred.")
         finally:
             if connection:
