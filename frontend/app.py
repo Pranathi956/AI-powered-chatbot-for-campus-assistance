@@ -26,14 +26,15 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 # Kotha line (Safe version):
 # Patha line: client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 # Dini badulu idi petti chudu:
-api_key = os.getenv("GROQ_API_KEY")
+"""api_key = os.getenv("GROQ_API_KEY")
 print(f"DEBUG: API KEY IS -> '{api_key}'") # Logs lo key em vastundo telustundi
 
 if not api_key:
     # Key dorakkapothe manual ga ikkada petti test chey (Not safe for production, but only for testing)
     client = Groq(api_key=os.getenv("GROQ_API_KEY")) 
 else:
-    client = Groq(api_key=api_key)
+    client = Groq(api_key=api_key)"""
+client = Groq(api_key="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")
 
 def generate_groq_reply(prompt):
     try:
