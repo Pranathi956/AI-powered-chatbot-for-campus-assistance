@@ -45,7 +45,9 @@ def get_groq_response(prompt):
 # 2. DATABASE CONFIGURATION
 # ==========================================
 # actions.py line 44 replacement
-DB_PATH = os.path.join(os.getcwd(), "database", "college_db.db")
+#DB_PATH = os.path.join(os.getcwd(), "database", "college_db.db")
+# Path ni hardcode chesi chuddam 
+DB_PATH = "/app/database/college_db.db"
 print(f"DEBUG: Looking for database at {DB_PATH}") 
 
 def get_db_connection():
