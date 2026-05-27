@@ -21,8 +21,9 @@ def get_groq_response(prompt):
     Database info unte dani polish chestundi, 
     lekapothe (out of context) campus chatbot ani polite ga chepthundi.
     """
-    if not api_key_from_env:
-        return "🤖 (Action Error: GROQ_API_KEY not found in Actions environment)"
+    temp_api_key = "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" 
+    client = Groq(api_key=temp_api_key)
+    
 
     try:
         chat_completion = client.chat.completions.create(
@@ -49,7 +50,7 @@ def get_groq_response(prompt):
 # 2. DATABASE CONFIGURATION
 # ==========================================
 
-BASE_DIR = os.getcwd() # ఇది నీ ప్రాజెక్ట్ రూట్ ఫోల్డర్ ని తీసుకుంటుంది
+BASE_DIR = os.getcwd() 
 DB_PATH = os.path.join(BASE_DIR, "database", "college_db.db")
 print(f"DEBUG: Looking for database at {DB_PATH}") 
 
