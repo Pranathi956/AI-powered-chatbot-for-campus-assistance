@@ -44,8 +44,8 @@ def get_groq_response(prompt):
 # ==========================================
 # 2. DATABASE CONFIGURATION
 # ==========================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "..", "database", "college_db.db")
+# actions.py line 44
+DB_PATH = os.path.join(os.getcwd(), "database", "college_db.db")
 
 def get_db_connection():
     try:
