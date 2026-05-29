@@ -185,7 +185,7 @@ $('userInput').addEventListener('keypress', e => {
 
 // Socket setup
 const socket = io({
-    transports: ['polling'] // ఇక్కడ కేవలం పోలింగ్ మాత్రమే వాడమని ఫిక్స్ చేస్తున్నాం
+    transports: ['polling'] ం
 ,upgrade:false});
 socket.emit('join_room', { room: `room_${student_id}` });
 socket.on('receive_message', data => {
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('[data-tab="home"]').click(); // Default tab
 
-  // ✅ Immediately preload chatbot history so it's available when tab is clicked
+  
   loadBotChatHistory();
   loadAdminHistory();
 });
