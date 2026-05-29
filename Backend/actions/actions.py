@@ -9,10 +9,7 @@ import sys
 def print_flush(text):
     print(text)
     sys.stdout.flush()
-# ==========================================
-# 1. GROQ CONFIGURATION
-# ==========================================
-# FIX: Using the environment variable correctly
+
 """api_key_from_env = os.getenv("GROQ_API_KEY")"""
 client = Groq(api_key="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")
 
