@@ -2,16 +2,15 @@ import sqlite3
 import os
 
 def setup_db():
-    # --- DYNAMIC PATH FIX ---
-    # Ee file unna folder (database folder) ni kashithanga kanukkuntundi
+    
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     
-    # Cloud (Railway) ki laptop ki renditiki pani chestundi
+    
     db_path = os.path.join(BASE_DIR, "college_db.db")
     
     print(f"Attempting to create database at: {db_path}")
 
-    # Connect chestundi (lekapothe create chestundi)
+    
     conn = sqlite3.connect(db_path)    
     cursor = conn.cursor()
 
