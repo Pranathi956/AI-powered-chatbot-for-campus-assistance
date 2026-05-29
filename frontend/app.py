@@ -20,17 +20,12 @@ load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
-# ───── Groq AI Configuration (Replacing Gemini) ─────
-# Gemini references are completely removed to prevent Railway ModuleNotFoundError
-# Patha line: client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-# Kotha line (Safe version):
-# Patha line: client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-# Dini badulu idi petti chudu:
+
 """api_key = os.getenv("GROQ_API_KEY")
-print(f"DEBUG: API KEY IS -> '{api_key}'") # Logs lo key em vastundo telustundi
+print(f"DEBUG: API KEY IS -> '{api_key}'") 
 
 if not api_key:
-    # Key dorakkapothe manual ga ikkada petti test chey (Not safe for production, but only for testing)
+    
     client = Groq(api_key=os.getenv("GROQ_API_KEY")) 
 else:
     client = Groq(api_key=api_key)"""
